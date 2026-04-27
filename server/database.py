@@ -127,3 +127,221 @@ class DB:
             return None
         d = self._row_to_dict(row)
         return self._normalize(d)
+    
+    def get_all_parks(self):
+        conn = self.get_connection()
+        cur = conn.cursor()
+        cur.execute(
+            """
+             SELECT name, owned_by, year_opened, visitors_per_year, visitors_per_day, location, image
+             FROM parks
+            """
+        )
+        rows = cur.fetchall()
+        result = []
+        for r in rows:
+            d = self._row_to_dict(r)
+            result.append(self._normalize(d))
+        conn.close()
+        return result
+    
+    def get_park_by_id(self, park_id: int):
+        conn = self.get_connection()
+        cur = conn.cursor()
+        cur.execute(
+            """
+            SELECT name, owned_by, year_opened, visitors_per_year, visitors_per_day, location, image
+            FROM parks
+            WHERE park_id = ?
+            """,
+            (park_id,)
+        )
+        row = cur.fetchone()
+        conn.close()
+        if not row:
+            return None
+        d = self._row_to_dict(row)
+        return self._normalize(d)
+    
+    def get_all_manufacturers(self):
+        conn = self.get_connection()
+        cur = conn.cursor()
+        cur.execute(
+            """
+             SELECT name, year_founded
+             FROM manufacturers
+            """
+        )
+        rows = cur.fetchall()
+        result = []
+        for r in rows:
+            d = self._row_to_dict(r)
+            result.append(self._normalize(d))
+        conn.close()
+        return result
+    
+    def get_manufacturer_by_id(self, manufacturer_id: int):
+        conn = self.get_connection()
+        cur = conn.cursor()
+        cur.execute(
+            """
+            SELECT name, year_founded
+            FROM manufacturers
+            WHERE manufacturer_id = ?
+            """,
+            (manufacturer_id,)
+        )
+        row = cur.fetchone()
+        conn.close()
+        if not row:
+            return None
+        d = self._row_to_dict(row)
+        return self._normalize(d)
+    
+    def get_coasters_by_park(self, park_name: str):
+        conn = self.get_connection()
+        cur = conn.cursor()
+        cur.execute(
+            """
+            SELECT rc.name AS rollercoaster
+            FROM rollercoasters rc
+            JOIN parks p ON p.park_id = rc.park_id
+            WHERE p.name = ?
+            """,
+            (park_name,)
+        )
+        rows = cur.fetchall()
+        result = []
+        for r in rows:
+            d = self._row_to_dict(r)
+            result.append(self._normalize(d))
+        conn.close()
+        return result
+    
+    def get_coasters_by_manufacturer(self, manufacturer_id: int):
+        conn = self.get_connection()
+        cur = conn.cursor()
+        cur.execute(
+            """
+            SELECT rc.name AS rollercoaster, p.name AS park
+            FROM rollercoasters rc
+            JOIN manufacturers m ON m.manufacturer_id = rc.manufacturer_id
+            JOIN parks p ON p.park_id = rc.park_id
+            WHERE m.manufacturer_id = ?
+            """,
+            (manufacturer_id,)
+        )
+        rows = cur.fetchall()
+        result = []
+        for r in rows:
+            d = self._row_to_dict(r)
+            result.append(self._normalize(d))
+        conn.close()
+        return result
+    
+    def get_all_operating_coasters(self):
+        conn = self.get_connection()
+        cur = conn.cursor()
+        cur.execute(
+            """
+            SELECT name
+            FROM rollercoasters
+            WHERE currently_operating = 1
+            """,
+        )
+        rows = cur.fetchall()
+        result = []
+        for r in rows:
+            d = self._row_to_dict(r)
+            result.append(self._normalize(d))
+        conn.close()
+        return result
+    
+    def get_all_defunct_coasters(self):
+        conn = self.get_connection()
+        cur = conn.cursor()
+        cur.execute(
+            """
+            SELECT name
+            FROM rollercoasters
+            WHERE removed = 1
+            """,
+        )
+        rows = cur.fetchall()
+        result = []
+        for r in rows:
+            d = self._row_to_dict(r)
+            result.append(self._normalize(d))
+        conn.close()
+        return result
+    
+    def get_all_SBNO_coasters(self):
+        conn = self.get_connection()
+        cur = conn.cursor()
+        cur.execute(
+            """
+            SELECT name
+            FROM rollercoasters
+            WHERE SBNO = 1
+            """,
+        )
+        rows = cur.fetchall()
+        result = []
+        for r in rows:
+            d = self._row_to_dict(r)
+            result.append(self._normalize(d))
+        conn.close()
+        return result
+    
+    def get_coasters_above_height(self, height: int):
+        conn = self.get_connection()
+        cur = conn.cursor()
+        cur.execute(
+            """
+            SELECT name, height
+            FROM rollercoasters
+            WHERE height > ?
+            ORDER BY height
+            """,
+            (height,)
+        )
+        rows = cur.fetchall()
+        result = []
+        for r in rows:
+            d = self._row_to_dict(r)
+            result.append(self._normalize(d))
+        conn.close()
+        print(result)
+        return result
+    
+    def get_coasters_below_height(self, height: int):
+        conn = self.get_connection()
+        cur = conn.cursor()
+        cur.execute(
+            """
+            SELECT name, height
+            FROM rollercoasters
+            WHERE height < ? AND height > 0
+            ORDER BY height;
+            """,
+            (height,)
+        )
+        rows = cur.fetchall()
+        result = []
+        for r in rows:
+            d = self._row_to_dict(r)
+            result.append(self._normalize(d))
+        conn.close()
+        print(result)
+        return result
+    
+    
+# Just for testing queries
+'''# 1. Create an instance of your DB class
+my_database = DB() 
+
+# 2. Call the method on the instance!
+results = my_database.get_coasters_below_height(200)
+
+# Optional: Print the results to see what you got
+print(results)'''
