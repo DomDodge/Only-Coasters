@@ -335,13 +335,34 @@ class DB:
         print(result)
         return result
     
+    def get_manufacturers_ranked_by_avg_height(self):
+        conn = self.get_connection()
+        cur = conn.cursor()
+        cur.execute(
+            """
+            SELECT m.name AS manufacturer, ROUND(AVG(rc.height), 2) AS avg_height
+            FROM rollercoasters rc
+            JOIN manufacturers m ON m.manufacturer_id = rc.manufacturer_id
+            GROUP BY manufacturer
+            ORDER BY avg_height DESC
+            """,
+        )
+        rows = cur.fetchall()
+        result = []
+        for r in rows:
+            d = self._row_to_dict(r)
+            result.append(self._normalize(d))
+        conn.close()
+        print(result)
+        return result
+    
     
 # Just for testing queries
-'''# 1. Create an instance of your DB class
+# 1. Create an instance of your DB class
 my_database = DB() 
 
 # 2. Call the method on the instance!
-results = my_database.get_coasters_below_height(200)
+results = my_database.get_manufacturers_ranked_by_avg_height()
 
 # Optional: Print the results to see what you got
-print(results)'''
+print(results)
