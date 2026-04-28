@@ -198,28 +198,6 @@ class DB:
         d = self._row_to_dict(row)
         return self._normalize(d)
     
-    def get_manufacturer_by_id(self):
-        conn = self.get_connection()
-        cur = conn.cursor()
-        cur.execute(
-            """
-            SELECT
-                P.name AS park_name,
-                CAST(AVG(R.avg_wait_time) AS INTEGER) AS avg_wait,
-                P.visitors_per_day AS daily_visitors
-            FROM rollercoasters AS R
-            JOIN parks AS P ON P.park_id = R.park_id
-            GROUP BY P.park_id
-            ORDER BY P.visitors_per_day DESC, avg_wait ASC;
-            """,
-        )
-        row = cur.fetchone()
-        conn.close()
-        if not row:
-            return None
-        d = self._row_to_dict(row)
-        return self._normalize(d)
-    
     def get_coasters_by_park(self, park_name: str):
         conn = self.get_connection()
         cur = conn.cursor()
@@ -420,13 +398,37 @@ class DB:
         print(result)
         return result
     
+    def get_parks_with_low_wait_high_attendence(self):
+        conn = self.get_connection()
+        cur = conn.cursor()
+        cur.execute(
+            """
+            SELECT
+                P.name AS park_name,
+                CAST(AVG(R.avg_wait_time) AS INTEGER) AS avg_wait,
+                P.visitors_per_day AS daily_visitors
+            FROM rollercoasters AS R
+            JOIN parks AS P ON P.park_id = R.park_id
+            GROUP BY P.park_id
+            ORDER BY P.visitors_per_day DESC, avg_wait ASC;
+            """,
+        )
+        rows = cur.fetchall()
+        result = []
+        for r in rows:
+            d = self._row_to_dict(r)
+            result.append(self._normalize(d))
+        conn.close()
+        print(result)
+        return result
+    
     
 # Just for testing queries
 # 1. Create an instance of your DB class
 my_database = DB() 
 
 # 2. Call the method on the instance!
-results = my_database.manufacturers_high_vs_low_thrill()
+results = my_database.get_parks_with_low_wait_high_attendence()
 
 # Optional: Print the results to see what you got
 print(results)
