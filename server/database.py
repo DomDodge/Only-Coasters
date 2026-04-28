@@ -377,13 +377,34 @@ class DB:
         print(result)
         return result
     
+    def manufacturers_high_vs_low_thrill(self):
+        conn = self.get_connection()
+        cur = conn.cursor()
+        cur.execute(
+            """
+            SELECT m.name AS manufacturer, thrill_level, COUNT(*) AS ride_count 
+            FROM rollercoasters rc JOIN manufacturers m ON m.manufacturer_id = rc.manufacturer_id 
+            WHERE thrill_level = 'high' OR thrill_level = 'low' 
+            GROUP BY manufacturer, rc.thrill_level 
+            ORDER BY rc.thrill_level, ride_count DESC
+            """,
+        )
+        rows = cur.fetchall()
+        result = []
+        for r in rows:
+            d = self._row_to_dict(r)
+            result.append(self._normalize(d))
+        conn.close()
+        print(result)
+        return result
+    
     
 # Just for testing queries
 # 1. Create an instance of your DB class
 my_database = DB() 
 
 # 2. Call the method on the instance!
-results = my_database.get_manufacturers_ranked_by_avg_speed()
+results = my_database.manufacturers_high_vs_low_thrill()
 
 # Optional: Print the results to see what you got
 print(results)
