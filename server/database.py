@@ -52,6 +52,7 @@
 
 import os
 import sqlite3
+import math
 
 class DB:
     """Lightweight SQLite helper for the app.
@@ -422,13 +423,236 @@ class DB:
         print(result)
         return result
     
+    # The user will input x as the percent of coasters they would like to see
+    # The percentage they input MUST be in decimal format (e.g 5% should be typed as 0.05)
+    # This goes for all top x% coaster queries
+    def get_top_x_percent_of_coasters_by_height(self, x):
+        conn = self.get_connection()
+        cur = conn.cursor()
+        cur.execute(
+            """
+            SELECT COUNT(1) AS count FROM rollercoasters
+            """
+        )
+        row = cur.fetchone()
+        if not row:
+            return None
+        d = self._row_to_dict(row)
+        result = self._normalize(d)
+        N = result['count']
+        
+        cutoff = x * N
+        cutoff = math.ceil(cutoff)
+        
+        cur.execute(
+            """
+            SELECT name, height
+            FROM rollercoasters
+            ORDER BY height DESC 
+            LIMIT ?
+            """,
+            (cutoff,)
+        )
+        rows = cur.fetchall()
+        result = []
+        for r in rows:
+            d = self._row_to_dict(r)
+            result.append(self._normalize(d))
+        
+        coaster_at_cutoff = result[cutoff-1]
+        cutoff_height = coaster_at_cutoff['height']
+        
+        cur.execute( 
+        """
+        SELECT name, height, speed, length, year_opened, inversions, model 
+        FROM rollercoasters 
+        WHERE height >= ? 
+        ORDER BY height DESC
+        """,
+        (cutoff_height,)
+        
+        )
+        rows = cur.fetchall()
+        result = []
+        for r in rows:
+            d = self._row_to_dict(r)
+            result.append(self._normalize(d))
+        conn.close()
+        print(result)
+        return result
+    
+    def get_top_x_percent_of_coasters_by_speed(self, x):
+        conn = self.get_connection()
+        cur = conn.cursor()
+        cur.execute(
+            """
+            SELECT COUNT(1) AS count FROM rollercoasters
+            """
+        )
+        row = cur.fetchone()
+        if not row:
+            return None
+        d = self._row_to_dict(row)
+        result = self._normalize(d)
+        N = result['count']
+        
+        cutoff = x * N
+        cutoff = math.ceil(cutoff)
+        
+        cur.execute(
+            """
+            SELECT name, speed
+            FROM rollercoasters
+            ORDER BY speed DESC 
+            LIMIT ?
+            """,
+            (cutoff,)
+        )
+        rows = cur.fetchall()
+        result = []
+        for r in rows:
+            d = self._row_to_dict(r)
+            result.append(self._normalize(d))
+        
+        coaster_at_cutoff = result[cutoff-1]
+        cutoff_speed = coaster_at_cutoff['speed']
+        
+        cur.execute( 
+        """
+        SELECT name, height, speed, length, year_opened, inversions, model 
+        FROM rollercoasters 
+        WHERE speed >= ? 
+        ORDER BY height DESC
+        """,
+        (cutoff_speed,)
+        
+        )
+        rows = cur.fetchall()
+        result = []
+        for r in rows:
+            d = self._row_to_dict(r)
+            result.append(self._normalize(d))
+        conn.close()
+        print(result)
+        return result
+    
+    def get_top_x_percent_of_coasters_by_length(self, x):
+        conn = self.get_connection()
+        cur = conn.cursor()
+        cur.execute(
+            """
+            SELECT COUNT(1) AS count FROM rollercoasters
+            """
+        )
+        row = cur.fetchone()
+        if not row:
+            return None
+        d = self._row_to_dict(row)
+        result = self._normalize(d)
+        N = result['count']
+        
+        cutoff = x * N
+        cutoff = math.ceil(cutoff)
+        
+        cur.execute(
+            """
+            SELECT name, length
+            FROM rollercoasters
+            ORDER BY length DESC 
+            LIMIT ?
+            """,
+            (cutoff,)
+        )
+        rows = cur.fetchall()
+        result = []
+        for r in rows:
+            d = self._row_to_dict(r)
+            result.append(self._normalize(d))
+        
+        coaster_at_cutoff = result[cutoff-1]
+        cutoff_length = coaster_at_cutoff['length']
+        
+        cur.execute( 
+        """
+        SELECT name, height, speed, length, year_opened, inversions, model 
+        FROM rollercoasters 
+        WHERE length >= ? 
+        ORDER BY height DESC
+        """,
+        (cutoff_length,)
+        
+        )
+        rows = cur.fetchall()
+        result = []
+        for r in rows:
+            d = self._row_to_dict(r)
+            result.append(self._normalize(d))
+        conn.close()
+        print(result)
+        return result
+    
+    def get_top_x_percent_of_coasters_by_age(self, x):
+        conn = self.get_connection()
+        cur = conn.cursor()
+        cur.execute(
+            """
+            SELECT COUNT(1) AS count FROM rollercoasters
+            """
+        )
+        row = cur.fetchone()
+        if not row:
+            return None
+        d = self._row_to_dict(row)
+        result = self._normalize(d)
+        N = result['count']
+        
+        cutoff = x * N
+        cutoff = math.ceil(cutoff)
+        
+        cur.execute(
+            """
+            SELECT name, age
+            FROM rollercoasters
+            ORDER BY age DESC 
+            LIMIT ?
+            """,
+            (cutoff,)
+        )
+        rows = cur.fetchall()
+        result = []
+        for r in rows:
+            d = self._row_to_dict(r)
+            result.append(self._normalize(d))
+        
+        coaster_at_cutoff = result[cutoff-1]
+        cutoff_age = coaster_at_cutoff['age']
+        
+        cur.execute( 
+        """
+        SELECT name, height, speed, length, year_opened, inversions, age, model 
+        FROM rollercoasters 
+        WHERE age >= ? 
+        ORDER BY age DESC
+        """,
+        (cutoff_age,)
+        
+        )
+        rows = cur.fetchall()
+        result = []
+        for r in rows:
+            d = self._row_to_dict(r)
+            result.append(self._normalize(d))
+        conn.close()
+        print(result)
+        return result
+    
     
 # Just for testing queries
 # 1. Create an instance of your DB class
 my_database = DB() 
 
 # 2. Call the method on the instance!
-results = my_database.get_parks_with_low_wait_high_attendence()
+results = my_database.get_top_x_percent_of_coasters_by_age(0.05)
 
 # Optional: Print the results to see what you got
 print(results)
