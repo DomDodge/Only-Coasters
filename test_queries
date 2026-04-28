@@ -1,0 +1,22 @@
+HIGH ATTENDANCE/SHORT WAIT TIME
+
+SELECT
+    P.name AS park_name,
+    CAST(AVG(R.avg_wait_time) AS INTEGER) AS avg_wait,
+    P.visitors_per_day AS daily_visitors
+FROM rollercoasters AS R
+JOIN parks AS P ON P.park_id = R.park_id
+GROUP BY P.park_id
+ORDER BY P.visitors_per_day DESC, avg_wait ASC; -- Priorities swapped
+
+MANUFACTURER THRILL LEVELS
+
+SELECT
+   M.name
+   SUM(CASE WHEN LOWER(R.thrill_level) = 'high' THEN 1 ELSE 0 END) AS high_count,
+   SUM(CASE WHEN LOWER(R.thrill_level) = 'low' THEN 1 ELSE 0 END) AS low_count
+FROM rollercoasters AS R
+JOIN manufacturers AS M
+ON M.manufacturer_id = M.manufacturer_id
+GROUP BY M.name;
+
