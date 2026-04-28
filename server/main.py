@@ -1,6 +1,6 @@
 from flask import Flask, jsonify, abort
 from flask_cors import CORS
-from .database import DB
+from database import DB
 
 app = Flask(__name__, static_folder='../client', static_url_path='')
 CORS(app)

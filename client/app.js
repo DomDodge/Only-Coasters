@@ -1,4 +1,4 @@
-const API_BASE = ''; // same-origin; when Flask serves the client this will call /coasters and /coasters/:id
+const API_BASE = 'http://127.0.0.1:5000';
 
 async function fetchJSON(url) {
   const res = await fetch(url);
