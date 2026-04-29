@@ -71,5 +71,77 @@ function escapeHtml(s) {
     .replace(/'/g, '&#39;');
 }
 
-// Initialize
-window.addEventListener('DOMContentLoaded', loadList);
+// Render query results into the results container
+function renderQueryResults(data) {
+  const out = document.getElementById('query-results');
+  if (!out) return;
+  if (!data) {
+    out.textContent = 'No results.';
+    return;
+  }
+  if (Array.isArray(data)) {
+    if (data.length === 0) {
+      out.textContent = 'No results.';
+      return;
+    }
+    const first = data[0];
+    if (first && typeof first === 'object') {
+      const keys = Object.keys(first);
+      const table = document.createElement('table');
+      const thead = document.createElement('thead');
+      const trh = document.createElement('tr');
+      keys.forEach(k => { const th = document.createElement('th'); th.textContent = k; trh.appendChild(th); });
+      thead.appendChild(trh);
+      table.appendChild(thead);
+      const tbody = document.createElement('tbody');
+      data.forEach(row => {
+        const tr = document.createElement('tr');
+        keys.forEach(k => {
+          const td = document.createElement('td');
+          td.textContent = row[k] === null || row[k] === undefined ? '' : row[k];
+          tr.appendChild(td);
+        });
+        tbody.appendChild(tr);
+      });
+      table.appendChild(tbody);
+      out.innerHTML = '';
+      out.appendChild(table);
+      return;
+    }
+    out.innerHTML = '';
+    const ul = document.createElement('ul');
+    data.forEach(i => { const li = document.createElement('li'); li.textContent = String(i); ul.appendChild(li); });
+    out.appendChild(ul);
+    return;
+  }
+  out.textContent = typeof data === 'object' ? JSON.stringify(data, null, 2) : String(data);
+}
+
+async function safeFetchJSON(path) {
+  try {
+    const url = `${API_BASE}${path}`;
+    return await fetchJSON(url);
+  } catch (err) {
+    const out = document.getElementById('query-results');
+    if (out) out.textContent = 'Query failed.';
+    console.error(err);
+    return null;
+  }
+}
+
+function setupQueries() {
+  const byId = id => document.getElementById(id);
+  byId('btn-operating')?.addEventListener('click', async () => { renderQueryResults(await safeFetchJSON('/queries/operating')); });
+  byId('btn-defunct')?.addEventListener('click', async () => { renderQueryResults(await safeFetchJSON('/queries/defunct')); });
+  byId('btn-sbno')?.addEventListener('click', async () => { renderQueryResults(await safeFetchJSON('/queries/sbno')); });
+  byId('btn-manuf-avg-height')?.addEventListener('click', async () => { renderQueryResults(await safeFetchJSON('/queries/manufacturers/avg_height')); });
+  byId('btn-manuf-avg-speed')?.addEventListener('click', async () => { renderQueryResults(await safeFetchJSON('/queries/manufacturers/avg_speed')); });
+  byId('btn-parks-low-wait')?.addEventListener('click', async () => { renderQueryResults(await safeFetchJSON('/queries/parks/low_wait_high_attendance')); });
+  const topX = () => document.getElementById('top-x')?.value.trim() || '';
+  byId('btn-top-age')?.addEventListener('click', async () => { renderQueryResults(await safeFetchJSON(`/queries/top/age?x=${encodeURIComponent(topX())}`)); });
+  byId('btn-top-height')?.addEventListener('click', async () => { renderQueryResults(await safeFetchJSON(`/queries/top/height?x=${encodeURIComponent(topX())}`)); });
+  byId('btn-top-speed')?.addEventListener('click', async () => { renderQueryResults(await safeFetchJSON(`/queries/top/speed?x=${encodeURIComponent(topX())}`)); });
+  byId('btn-top-length')?.addEventListener('click', async () => { renderQueryResults(await safeFetchJSON(`/queries/top/length?x=${encodeURIComponent(topX())}`)); });
+}
+
+window.addEventListener('DOMContentLoaded', () => { loadList(); setupQueries(); });
