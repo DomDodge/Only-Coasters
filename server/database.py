@@ -398,6 +398,38 @@ class DB:
         conn.close()
         print(result)
         return result
+
+    def get_inversions_vs_thrill(self):
+        """Return aggregated stats comparing inversions to thrill level.
+
+        For each `thrill_level` this returns:
+        - ride_count: total rides in that thrill level
+        - avg_inversions: average number of inversions (rounded)
+        - with_inversions: count of rides with inversions > 0
+        - percent_with_inversions: percentage of rides with inversions
+        """
+        conn = self.get_connection()
+        cur = conn.cursor()
+        cur.execute(
+            """
+            SELECT
+                COALESCE(thrill_level, 'unknown') AS thrill_level,
+                COUNT(*) AS ride_count,
+                ROUND(AVG(CAST(inversions AS FLOAT)), 2) AS avg_inversions,
+                SUM(CASE WHEN inversions > 0 THEN 1 ELSE 0 END) AS with_inversions,
+                ROUND(100.0 * SUM(CASE WHEN inversions > 0 THEN 1 ELSE 0 END) / COUNT(*), 2) AS percent_with_inversions
+            FROM rollercoasters
+            GROUP BY thrill_level
+            ORDER BY avg_inversions DESC
+            """,
+        )
+        rows = cur.fetchall()
+        result = []
+        for r in rows:
+            d = self._row_to_dict(r)
+            result.append(self._normalize(d))
+        conn.close()
+        return result
     
     def get_parks_with_low_wait_high_attendence(self):
         conn = self.get_connection()

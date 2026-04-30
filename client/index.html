@@ -22,7 +22,41 @@
       <ul id="coaster-list">Loading...</ul>
     </section>
 
+    <section id="details">
+      <h2>Details</h2>
+      <div id="coaster-details">Select a coaster to see details.</div>
+    </section>
 
+    <section id="queries">
+      <h2>Queries</h2>
+      <div class="query-controls">
+        <label>Top X percent (decimal): <input id="top-x" type="text" placeholder="0.05"></label>
+        <button id="btn-top-age">Top by Age</button>
+        <button id="btn-top-height">Top by Height</button>
+        <button id="btn-top-speed">Top by Speed</button>
+        <button id="btn-top-length">Top by Length</button>
+      </div>
+      <div class="query-controls">
+        <button id="btn-manuf-avg-height">Manufacturers: Avg Height</button>
+        <button id="btn-manuf-avg-speed">Manufacturers: Avg Speed</button>
+        <button id="btn-parks-low-wait">Parks: Low Wait / High Attendance</button>
+        <button id="btn-inversions-thrill">Inversions vs Thrill</button>
+      </div>
+      <div class="query-controls">
+        <button id="btn-operating">All Operating</button>
+        <button id="btn-defunct">All Defunct</button>
+        <button id="btn-sbno">All SBNO</button>
+      </div>
+
+      <h3>Results</h3>
+          <div id="query-results">No results yet.</div>
+          <div id="chart-wrap" style="display:none;">
+            <canvas id="query-chart" width="600" height="300"></canvas>
+          </div>
+    </section>
+
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
