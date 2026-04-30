@@ -143,4 +143,5 @@ def queries_top_length():
         return jsonify({'error': 'failed to fetch top length coasters'}), 500
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    # Run on a non-conflicting port (5001) since macOS may reserve 5000
+    app.run(debug=True, port=5001)
