@@ -3,24 +3,82 @@ body {
     flex-direction: column;
     padding: 0;
     margin: 0;
-    font-family: sans-serif;
+    font-family: Inter, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+    background: linear-gradient(180deg, #fffaf8 0%, #f7f3fb 100%);
 }
 
 header {
-    background-color: #FF537B;
+    background: linear-gradient(90deg,#FF537B 0%,#E13F7C 100%);
     color: white;
     width: 100%;
-    height: 80px;
+    height: 96px;
     text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 4px 16px rgba(17,24,39,0.08);
 }
 
 .subHeader {
-    background-color: #E13F7C;
-    color: white;
+    background: #ffffffcc;
+    color: #222;
     width: 100%;
-    height: 40px;
+    height: 48px;
     text-align: center;
     display: flex;
     flex-direction: row;
     justify-content: space-around;
+    align-items: center;
+    gap: 12px;
+    padding: 8px 16px;
+    border-bottom: 1px solid rgba(0,0,0,0.04);
 }   
+
+/* Layout for the main content */
+main {
+    display: grid;
+    grid-template-columns: 320px 1fr 420px;
+    gap: 20px;
+    padding: 24px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+section {
+    background: white;
+    border-radius: 10px;
+    padding: 16px;
+    box-shadow: 0 6px 18px rgba(16,24,40,0.06);
+}
+
+#list h2, #details h2, #queries h2 { margin-top: 0; }
+
+#coaster-list { list-style: none; padding: 0; margin: 0; }
+#coaster-list li { margin-bottom: 8px; }
+#coaster-list button {
+    width: 100%;
+    padding: 10px 12px;
+    border-radius: 8px;
+    border: 1px solid rgba(17,24,39,0.06);
+    background: linear-gradient(180deg,#fff 0%,#fcfcfd 100%);
+    text-align: left;
+    cursor: pointer;
+}
+
+#coaster-details img { max-width: 100%; border-radius: 8px; margin-top: 8px; }
+
+.query-controls { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:12px; }
+.query-controls button { padding:8px 10px; border-radius:8px; border:none; background:#FF537B; color:white; cursor:pointer; }
+.query-controls input { padding:7px 8px; border-radius:6px; border:1px solid rgba(0,0,0,0.08); }
+
+table { width:100%; border-collapse: collapse; font-size: 14px; }
+th, td { padding:8px 10px; border-bottom: 1px solid rgba(0,0,0,0.04); text-align:left; }
+th { background: linear-gradient(90deg,#f8fafc,#fff); position: sticky; top: 0; }
+
+#query-results { max-height: 360px; overflow:auto; }
+
+#chart-wrap { margin-top: 12px; }
+
+@media (max-width: 1000px) {
+  main { grid-template-columns: 1fr; }
+}
