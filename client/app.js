@@ -209,28 +209,36 @@ function setupQueries() {
   });
   const topX = () => document.getElementById('top-x')?.value.trim() || '';
   byId('btn-top-age')?.addEventListener('click', async () => {
-    const data = await safeFetchJSON(`/queries/top/age?x=${encodeURIComponent(topX())}`);
+    const val = topX();
+    if (!val) { document.getElementById('query-results').textContent = 'Please enter a value for Top X percent.'; hideChart(); return; }
+    const data = await safeFetchJSON(`/queries/top/age?x=${encodeURIComponent(val)}`);
     if (data) {
       const did = renderChartFromObjects(data, ['name'], ['age'], 'Top by Age');
       if (!did) { hideChart(); renderQueryResults(data); } else { document.getElementById('query-results').innerHTML = ''; }
     }
   });
   byId('btn-top-height')?.addEventListener('click', async () => {
-    const data = await safeFetchJSON(`/queries/top/height?x=${encodeURIComponent(topX())}`);
+    const val = topX();
+    if (!val) { document.getElementById('query-results').textContent = 'Please enter a value for Top X percent.'; hideChart(); return; }
+    const data = await safeFetchJSON(`/queries/top/height?x=${encodeURIComponent(val)}`);
     if (data) {
       const did = renderChartFromObjects(data, ['name'], ['height'], 'Top by Height');
       if (!did) { hideChart(); renderQueryResults(data); } else { document.getElementById('query-results').innerHTML = ''; }
     }
   });
   byId('btn-top-speed')?.addEventListener('click', async () => {
-    const data = await safeFetchJSON(`/queries/top/speed?x=${encodeURIComponent(topX())}`);
+    const val = topX();
+    if (!val) { document.getElementById('query-results').textContent = 'Please enter a value for Top X percent.'; hideChart(); return; }
+    const data = await safeFetchJSON(`/queries/top/speed?x=${encodeURIComponent(val)}`);
     if (data) {
       const did = renderChartFromObjects(data, ['name'], ['speed'], 'Top by Speed');
       if (!did) { hideChart(); renderQueryResults(data); } else { document.getElementById('query-results').innerHTML = ''; }
     }
   });
   byId('btn-top-length')?.addEventListener('click', async () => {
-    const data = await safeFetchJSON(`/queries/top/length?x=${encodeURIComponent(topX())}`);
+    const val = topX();
+    if (!val) { document.getElementById('query-results').textContent = 'Please enter a value for Top X percent.'; hideChart(); return; }
+    const data = await safeFetchJSON(`/queries/top/length?x=${encodeURIComponent(val)}`);
     if (data) {
       const did = renderChartFromObjects(data, ['name'], ['length'], 'Top by Length');
       if (!did) { hideChart(); renderQueryResults(data); } else { document.getElementById('query-results').innerHTML = ''; }

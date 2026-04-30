@@ -92,11 +92,18 @@ def _parse_percent_param():
         if x is None:
             return None, ('missing x param', 400)
         x = float(x)
-        if x <= 0 or x > 1:
-            return None, ('x must be a decimal between 0 and 1 (exclusive)', 400)
+        # Accept either a decimal between 0 and 1 (e.g. 0.05)
+        # or a percentage between 1 and 100 (e.g. 5 or 10)
+        if x <= 0:
+            return None, ('x must be positive', 400)
+        if x > 1 and x <= 100:
+            # Treat whole-number percent as decimal fraction
+            x = x / 100.0
+        elif x > 100:
+            return None, ('x must be a decimal between 0 and 1 or a percent up to 100 (e.g. 0.05 or 5)', 400)
         return x, None
     except ValueError:
-        return None, ('x must be a decimal (e.g. 0.05)', 400)
+        return None, ('x must be a decimal (e.g. 0.05) or percentage (e.g. 5)', 400)
 
 
 @app.route('/queries/top/age', methods=['GET'])
