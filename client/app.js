@@ -192,6 +192,14 @@ function setupQueries() {
       if (!did) { hideChart(); renderQueryResults(data); } else { document.getElementById('query-results').innerHTML = ''; }
     }
   });
+  byId('btn-inversions-thrill')?.addEventListener('click', async () => {
+    const data = await safeFetchJSON('/queries/inversions_vs_thrill');
+    if (data) {
+      // Try to show average inversions by thrill level as a chart; also render the full table
+      const did = renderChartFromObjects(data, ['thrill_level', 'name'], ['avg_inversions', 'avg'], 'Avg Inversions — Thrill Level');
+      if (!did) { hideChart(); renderQueryResults(data); } else { document.getElementById('query-results').innerHTML = ''; }
+    }
+  });
   byId('btn-parks-low-wait')?.addEventListener('click', async () => {
     const data = await safeFetchJSON('/queries/parks/low_wait_high_attendance');
     if (data) {

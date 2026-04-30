@@ -78,6 +78,14 @@ def queries_parks_low_wait_high_attendance():
         return jsonify({'error': 'failed to fetch parks metrics'}), 500
 
 
+@app.route('/queries/inversions_vs_thrill', methods=['GET'])
+def queries_inversions_vs_thrill():
+    try:
+        return jsonify(db.get_inversions_vs_thrill())
+    except Exception:
+        return jsonify({'error': 'failed to fetch inversions vs thrill'}), 500
+
+
 def _parse_percent_param():
     x = request.args.get('x', default=None)
     try:
